@@ -1,11 +1,14 @@
 "use client"
 
-import { useState } from 'react';
+
 import { Input } from './ui/input';
 import { Textarea } from './ui/textarea';
 import { Button } from './ui/button';
 import { Label } from './ui/label';
 import { ResumeData } from '@/lib/types';
+import { Card, CardContent } from './ui/card';
+
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs"
 
 interface ResumeFormProps {
   data: ResumeData;
@@ -13,7 +16,8 @@ interface ResumeFormProps {
 }
 
 export function ResumeForm({ data, setData }: ResumeFormProps) {
-  const [activeSection, setActiveSection] = useState('personalInfo');
+  // Remove this line as we'll use Tabs instead
+  // const [activeSection, setActiveSection] = useState('personalInfo');
 
   const updatePersonalInfo = (field: string, value: string) => {
     setData(prev => ({
@@ -85,80 +89,87 @@ export function ResumeForm({ data, setData }: ResumeFormProps) {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex space-x-2 mb-4">
-        <Button onClick={() => setActiveSection('personalInfo')} variant={activeSection === 'personalInfo' ? 'default' : 'outline'}>Personal Info</Button>
-        <Button onClick={() => setActiveSection('workExperience')} variant={activeSection === 'workExperience' ? 'default' : 'outline'}>Work Experience</Button>
-        <Button onClick={() => setActiveSection('education')} variant={activeSection === 'education' ? 'default' : 'outline'}>Education</Button>
-        <Button onClick={() => setActiveSection('skills')} variant={activeSection === 'skills' ? 'default' : 'outline'}>Skills</Button>
-        <Button onClick={() => setActiveSection('projects')} variant={activeSection === 'projects' ? 'default' : 'outline'}>Projects</Button>
-      </div>
-
-      {activeSection === 'personalInfo' && (
-        <div className="space-y-4">
-          <div>
-            <Label htmlFor="name">Name</Label>
-            <Input id="name" value={data.personalInfo.name} onChange={(e) => updatePersonalInfo('name', e.target.value)} />
-          </div>
-          <div>
-            <Label htmlFor="email">Email</Label>
-            <Input id="email" type="email" value={data.personalInfo.email} onChange={(e) => updatePersonalInfo('email', e.target.value)} />
-          </div>
-          <div>
-            <Label htmlFor="phone">Phone</Label>
-            <Input id="phone" type="tel" value={data.personalInfo.phone} onChange={(e) => updatePersonalInfo('phone', e.target.value)} />
-          </div>
-        </div>
-      )}
-
-      {activeSection === 'workExperience' && (
-        <div className="space-y-4">
-          {data.workExperience.map((exp, index) => (
-            <div key={index} className="border p-4 rounded-md">
-              <Input placeholder="Company" value={exp.company} onChange={(e) => updateExperience(index, 'company', e.target.value)} className="mb-2" />
-              <Input placeholder="Position" value={exp.position} onChange={(e) => updateExperience(index, 'position', e.target.value)} className="mb-2" />
-              <Input placeholder="Start Date" value={exp.startDate} onChange={(e) => updateExperience(index, 'startDate', e.target.value)} className="mb-2" />
-              <Input placeholder="End Date" value={exp.endDate} onChange={(e) => updateExperience(index, 'endDate', e.target.value)} className="mb-2" />
-              <Textarea placeholder="Description" value={exp.description} onChange={(e) => updateExperience(index, 'description', e.target.value)} />
+    <Card className="p-6 bg-white shadow-lg rounded-lg">
+      <Tabs defaultValue="personalInfo" className="w-full">
+        <TabsList className="grid w-full grid-cols-5 gap-2">
+          <TabsTrigger value="personalInfo" className="hover:bg-gray-100 transition-colors">Personal Info</TabsTrigger>
+          <TabsTrigger value="workExperience" className="hover:bg-gray-100 transition-colors">Work Experience</TabsTrigger>
+          <TabsTrigger value="education" className="hover:bg-gray-100 transition-colors">Education</TabsTrigger>
+          <TabsTrigger value="skills" className="hover:bg-gray-100 transition-colors">Skills</TabsTrigger>
+          <TabsTrigger value="projects" className="hover:bg-gray-100 transition-colors">Projects</TabsTrigger>
+        </TabsList>
+        <TabsContent value="personalInfo">
+          <CardContent>
+            <div className="space-y-4">
+              <div>
+                <Label htmlFor="name" className="font-semibold">Name</Label>
+                <Input id="name" value={data.personalInfo.name} onChange={(e) => updatePersonalInfo('name', e.target.value)} className="border-gray-300 rounded-md" />
+              </div>
+              <div>
+                <Label htmlFor="email" className="font-semibold">Email</Label>
+                <Input id="email" type="email" value={data.personalInfo.email} onChange={(e) => updatePersonalInfo('email', e.target.value)} className="border-gray-300 rounded-md" />
+              </div>
+              <div>
+                <Label htmlFor="phone" className="font-semibold">Phone</Label>
+                <Input id="phone" type="tel" value={data.personalInfo.phone} onChange={(e) => updatePersonalInfo('phone', e.target.value)} className="border-gray-300 rounded-md" />
+              </div>
             </div>
-          ))}
-          <Button onClick={addExperience}>Add Experience</Button>
-        </div>
-      )}
-
-      {activeSection === 'education' && (
-        <div className="space-y-4">
-          {data.education.map((edu, index) => (
-            <div key={index} className="border p-4 rounded-md">
-              <Input placeholder="Institution" value={edu.institution} onChange={(e) => updateEducation(index, 'institution', e.target.value)} className="mb-2" />
-              <Input placeholder="Degree" value={edu.degree} onChange={(e) => updateEducation(index, 'degree', e.target.value)} className="mb-2" />
-              <Input placeholder="Graduation Date" value={edu.graduationDate} onChange={(e) => updateEducation(index, 'graduationDate', e.target.value)} />
+          </CardContent>
+        </TabsContent>
+        <TabsContent value="workExperience">
+          <CardContent>
+            <div className="space-y-4">
+              {data.workExperience.map((exp, index) => (
+                <Card key={index} className="p-4 border border-gray-200 rounded-md">
+                  <Input placeholder="Company" value={exp.company} onChange={(e) => updateExperience(index, 'company', e.target.value)} className="mb-2 border-gray-300 rounded-md" />
+                  <Input placeholder="Position" value={exp.position} onChange={(e) => updateExperience(index, 'position', e.target.value)} className="mb-2 border-gray-300 rounded-md" />
+                  <Input placeholder="Start Date" value={exp.startDate} onChange={(e) => updateExperience(index, 'startDate', e.target.value)} className="mb-2 border-gray-300 rounded-md" />
+                  <Input placeholder="End Date" value={exp.endDate} onChange={(e) => updateExperience(index, 'endDate', e.target.value)} className="mb-2 border-gray-300 rounded-md" />
+                  <Textarea placeholder="Description" value={exp.description} onChange={(e) => updateExperience(index, 'description', e.target.value)} className="border-gray-300 rounded-md" />
+                </Card>
+              ))}
+              <Button onClick={addExperience} className="w-full bg-blue-500 text-white hover:bg-blue-600 transition-colors">Add Experience</Button>
             </div>
-          ))}
-          <Button onClick={addEducation}>Add Education</Button>
-        </div>
-      )}
-
-      {activeSection === 'skills' && (
-        <div className="space-y-4">
-          {data.skills.map((skill, index) => (
-            <Input key={index} placeholder="Skill" value={skill} onChange={(e) => updateSkill(index, e.target.value)} />
-          ))}
-          <Button onClick={addSkill}>Add Skill</Button>
-        </div>
-      )}
-
-      {activeSection === 'projects' && (
-        <div className="space-y-4">
-          {data.projects.map((project, index) => (
-            <div key={index} className="border p-4 rounded-md">
-              <Input placeholder="Project Name" value={project.name} onChange={(e) => updateProject(index, 'name', e.target.value)} className="mb-2" />
-              <Textarea placeholder="Project Description" value={project.description} onChange={(e) => updateProject(index, 'description', e.target.value)} />
+          </CardContent>
+        </TabsContent>
+        <TabsContent value="education">
+          <CardContent>
+            <div className="space-y-4">
+              {data.education.map((edu, index) => (
+                <Card key={index} className="p-4 border border-gray-200 rounded-md">
+                  <Input placeholder="Institution" value={edu.institution} onChange={(e) => updateEducation(index, 'institution', e.target.value)} className="mb-2 border-gray-300 rounded-md" />
+                  <Input placeholder="Degree" value={edu.degree} onChange={(e) => updateEducation(index, 'degree', e.target.value)} className="mb-2 border-gray-300 rounded-md" />
+                  <Input placeholder="Graduation Date" value={edu.graduationDate} onChange={(e) => updateEducation(index, 'graduationDate', e.target.value)} className="border-gray-300 rounded-md" />
+                </Card>
+              ))}
+              <Button onClick={addEducation} className="w-full bg-blue-500 text-white hover:bg-blue-600 transition-colors">Add Education</Button>
             </div>
-          ))}
-          <Button onClick={addProject}>Add Project</Button>
-        </div>
-      )}
-    </div>
+          </CardContent>
+        </TabsContent>
+        <TabsContent value="skills">
+          <CardContent>
+            <div className="space-y-4">
+              {data.skills.map((skill, index) => (
+                <Input key={index} placeholder="Skill" value={skill} onChange={(e) => updateSkill(index, e.target.value)} className="border-gray-300 rounded-md" />
+              ))}
+              <Button onClick={addSkill} className="w-full bg-blue-500 text-white hover:bg-blue-600 transition-colors">Add Skill</Button>
+            </div>
+          </CardContent>
+        </TabsContent>
+        <TabsContent value="projects">
+          <CardContent>
+            <div className="space-y-4">
+              {data.projects.map((project, index) => (
+                <Card key={index} className="p-4 border border-gray-200 rounded-md">
+                  <Input placeholder="Project Name" value={project.name} onChange={(e) => updateProject(index, 'name', e.target.value)} className="mb-2 border-gray-300 rounded-md" />
+                  <Textarea placeholder="Project Description" value={project.description} onChange={(e) => updateProject(index, 'description', e.target.value)} className="border-gray-300 rounded-md" />
+                </Card>
+              ))}
+              <Button onClick={addProject} className="w-full bg-blue-500 text-white hover:bg-blue-600 transition-colors">Add Project</Button>
+            </div>
+          </CardContent>
+        </TabsContent>
+      </Tabs>
+    </Card>
   );
 }
